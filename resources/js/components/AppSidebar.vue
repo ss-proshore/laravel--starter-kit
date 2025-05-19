@@ -15,19 +15,25 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Users',
-        href: '/users',
-        icon: Users,
-    },
-    {
-        title: 'Roles',
-        href: '/roles',
+        title: 'RBAC',
         icon: Shield,
-    },
-    {
-        title: 'Permissions',
-        href: '/permissions',
-        icon: KeyRound,
+        children: [
+            {
+                title: 'Users',
+                href: '/users',
+                icon: Users,
+            },
+            {
+                title: 'Roles',
+                href: '/roles',
+                icon: Shield,
+            },
+            {
+                title: 'Permissions',
+                href: '/permissions',
+                icon: KeyRound,
+            },
+        ],
     },
 ];
 
