@@ -6,6 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthBase from '@/layouts/AuthLayout.vue';
+import { useUserStore } from '@/stores/users';
 import { Head, useForm } from '@inertiajs/vue3';
 import { LoaderCircle } from 'lucide-vue-next';
 
@@ -13,6 +14,8 @@ defineProps<{
     status?: string;
     canResetPassword: boolean;
 }>();
+
+const userStore = useUserStore();
 
 const form = useForm({
     email: '',
@@ -22,7 +25,10 @@ const form = useForm({
 
 const submit = () => {
     form.post(route('login'), {
-        onFinish: () => form.reset('password'),
+        onFinish: () => {
+            form.reset('password')
+            userStore.fetchUser();
+        },
     });
 };
 </script>

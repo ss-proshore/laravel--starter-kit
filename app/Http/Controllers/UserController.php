@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -119,5 +120,22 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->delete();
         return Redirect::route('users.index')->with('success', 'User deleted successfully.');
+    }
+
+    public function userData()
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
+        $user->load('roles', 'permissions');
+
+        return response()->json([
+            'user' => $user,
+            'roles' => $user->getRoleNames(),        // Returns a collection of role names
+            'permissions' => $user->getAllPermissions()->pluck('name'), // Collection of permission names
+        ]);
     }
 }
