@@ -30,40 +30,53 @@ function destroy(id: number) {
 <template>
   <Head title="Permissions" />
   <AppLayout :breadcrumbs="breadcrumbs">
-    <div class="flex flex-col items-center justify-center min-h-[80vh]">
-      <Card class="w-full max-w-4xl">
+    <div class="container mx-auto p-6 h-full">
+      <Card class="w-full">
         <CardHeader>
-          <div class="flex justify-between items-center">
+          <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
             <CardTitle>Permissions</CardTitle>
-            <Button as="a" href="/permissions/create">Create Permission</Button>
+            <Button as="a" href="/permissions/create">
+              Create Permission
+            </Button>
           </div>
         </CardHeader>
         <CardContent>
           <!-- Search Field -->
-          <form @submit.prevent="searchPermissions" class="mb-4 flex gap-2">
-            <Input v-model="searchInput" placeholder="Search permissions..." class="w-64" />
+          <form @submit.prevent="searchPermissions" class="mb-6 flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+            <Input v-model="searchInput" placeholder="Search permissions..." class="w-full sm:w-64" />
             <Button type="submit" variant="outline">Search</Button>
             <Button v-if="searchInput" type="button" variant="ghost" @click="clearSearch">Clear</Button>
           </form>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow v-for="permission in props.permissions.data || []" :key="permission.id">
-                <TableCell>{{ permission.name }}</TableCell>
-                <TableCell>
-                  <Button as="a" :href="`/permissions/${permission.id}/edit`" size="sm" variant="outline">Edit</Button>
-                  <Button @click="destroy(permission.id)" size="sm" variant="destructive" class="ml-2">Delete</Button>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+
+          <div class="overflow-x-auto">
+            <Table class="w-full">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead class="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow v-for="permission in props.permissions?.data || []" :key="permission.id">
+                  <TableCell>{{ permission.name }}</TableCell>
+                  <TableCell class="text-right">
+                    <Button as="a" :href="`/permissions/${permission.id}/edit`" size="sm" variant="outline" class="mr-2">
+                      Edit
+                    </Button>
+                    <Button @click="destroy(permission.id)" size="sm" variant="destructive">
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+                 <TableRow v-if="!props.permissions?.data || props.permissions.data.length === 0">
+                  <TableCell colspan="2" class="text-center">No permissions found.</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+
           <!-- Pagination Controls -->
-          <div class="flex justify-center mt-4 gap-2">
+          <div v-if="props.permissions?.links?.length > 3" class="flex justify-center mt-4 gap-2 flex-wrap">
             <Button
               v-for="link in props.permissions.links"
               :key="link.label"
