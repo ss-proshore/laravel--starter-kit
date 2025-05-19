@@ -1,0 +1,86 @@
+---
+description: Comprehensive Laravel PHP Cursor Rules: Best Practices and Key Principles.
+globs: 
+alwaysApply: false
+---
+---
+description: Laravel developmemnt rules and tools
+globs: 
+alwaysApply: true
+---
+
+You are an expert in Laravel, PHP, and related web development technologies.
+
+# ✅ Cursor Rules – Laravel 12 + Inertia.js + Vue.js + ShadCN UI
+
+## ⚙️ Architecture Principles
+- **Follow Simple MVC:** Use Laravel’s native controller-model-view architecture. Avoid service-per-feature overengineering.
+- **Thin Controllers:** Controllers only handle HTTP interaction. Push logic to models or dedicated helpers/traits.
+- **Single Responsibility Components:** One page/component = one responsibility (e.g., form, list, table, modal).
+- **Flat Structure:** Organize by route/page, not deeply nested folders.
+
+## 🗃️ Laravel 12 (Backend)
+
+### 🔧 Code Style & Structure
+- `declare(strict_types=1);` in every PHP file.
+- Follow PSR-12 and Laravel naming conventions.
+- Use **typed properties**, return types, and parameter types everywhere.
+
+### 📂 Routing
+- Organize route files by domain: `routes/user.php`, `routes/admin.php`.
+- Group routes with `prefix`, `middleware`, and `as`.
+
+### 🧾 Controllers
+- Final classes only.
+- RESTful methods: `index`, `store`, `update`, `destroy`.
+- Use method injection or Form Request classes.
+
+### ✅ Validation
+- Use **Form Request classes** for all user input validation.
+- Define custom error messages and rules per context.
+
+### 🗃️ Models
+- Final classes only.
+- Keep logic readable; extract complex logic into model scopes or traits.
+- Use relationships, casts, and accessors consistently.
+
+### 📤 Responses
+- Use **Inertia::render()** for web.
+- Use **API Resources** when returning structured API data.
+
+## 🎨 Vue 3 + Inertia.js + ShadCN UI (Frontend)
+
+### 📁 Component Structure
+- Use `PascalCase` for file/component names.
+- One component per file. Group by page/feature (e.g., `Pages/User/Index.vue`).
+- Keep global UI elements in `components/ui/`.
+
+### 🧠 Composition API
+- Use `<script setup>` and the Composition API in all components.
+- Prefer `ref` and `computed`, avoid `data()` in new components.
+
+### 🧳 Props & Data
+- Props passed from Laravel should be documented, typed, and used with destructuring.
+- Do not overuse shared props; keep data local unless globally required.
+
+### 🧩 UI Reuse
+- Abstract buttons, forms, modals into composables or shared components.
+- Style with **ShadCN UI vue** primitives: consistent, accessible, and customizable.
+
+### 🧭 Inertia Features
+- Use `$inertia.visit()` for client-side navigation when needed.
+- Implement progress indicators using `@inertiajs/progress`.
+
+## 🛡️ Performance, UX & Security
+
+- Enable **CSRF**, input sanitization, and XSS protection via Laravel.
+- Use **debounce** for search/filtering inputs to limit requests.
+- Paginate large datasets using Laravel paginator + Inertia.
+- Lazy-load Vue components when needed to optimize build.
+- Use toast/snackbar notifications for feedback.
+
+## 🧪 Testing & Debugging
+
+- Write **Feature tests** for routes, controllers, and form submissions.
+- Use **Laravel Dusk** or **Cypress** for browser tests.
+- Monitor Inertia + Laravel props and requests using **Telescope** and **Vue DevTools**.
