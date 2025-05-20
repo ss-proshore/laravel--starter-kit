@@ -11,14 +11,14 @@ Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
 
-Route::get('dashboard', function () {
-    // $user = App\Models\User::find(4);
-    // $user->assignRole('user manager');
-    // dd($user->can('edit roles'));
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::get('dashboard', function () {
+        // $user = App\Models\User::find(4);
+        // $user->assignRole('user manager');
+        // dd($user->can('edit roles'));
+        return Inertia::render('Dashboard');
+    })->middleware('permission:view dashboard')->name('dashboard');
 
     Route::controller(RoleController::class)->prefix('/roles')->name('roles.')->group( function() {
         Route::get('/',  'index')
@@ -31,7 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/{role}',  'update')->middleware('permission:edit roles')->name('update');
         Route::delete('/{role}',  'destroy')->middleware('permission:delete roles')->name('destroy');
     });
-   
+
     Route::controller(PermissionController::class)->prefix('/permissions')->name('permissions.')->group( function() {
         Route::get('/',  'index')
                 ->middleware('permission:view permissions')
