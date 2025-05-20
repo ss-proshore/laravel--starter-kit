@@ -6,6 +6,7 @@ import { computed } from 'vue';
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ChevronRight } from 'lucide-vue-next';
+import { checkIfHasPermission } from '@/composables/usePermission';
 
 const props = defineProps<{ items: NavItem[] }>();
 
@@ -39,14 +40,14 @@ const defaultOpenCollapsibleItem = computed(() => {
             <template v-for="item in props.items" :key="item.title">
                 <!-- Render item with children as Collapsible -->
                 <Collapsible
-                    v-if="item.children"
+                    v-if="item.children && checkIfHasPermission(item.permissions)"
                     as-child
                     :default-open="item.title === defaultOpenCollapsibleItem"
                     class="group/collapsible"
                 >
                     <SidebarMenuItem>
                         <CollapsibleTrigger as-child>
-                            <SidebarMenuButton 
+                            <SidebarMenuButton
                                 :tooltip="item.title"
                                 class="w-full justify-start"
                                 :is-active="isLinkActive(item.href, item.children)"
@@ -60,9 +61,9 @@ const defaultOpenCollapsibleItem = computed(() => {
                             <SidebarMenuSub>
                                 <!-- Recursively render children -->
                                 <template v-for="child in item.children" :key="child.title">
-                                    <SidebarMenuSubItem v-if="!child.children">
-                                        <SidebarMenuSubButton 
-                                            as-child 
+                                    <SidebarMenuSubItem v-if="!child.children && checkIfHasPermission(child.permissions)">
+                                        <SidebarMenuSubButton
+                                            as-child
                                             :is-active="isLinkActive(child.href)"
                                             :tooltip="child.title"
                                         >
@@ -79,9 +80,9 @@ const defaultOpenCollapsibleItem = computed(() => {
                 </Collapsible>
 
                 <!-- Render single item without children as SidebarMenuItem -->
-                <SidebarMenuItem v-else>
-                    <SidebarMenuButton 
-                        as-child 
+                <SidebarMenuItem v-else-if="checkIfHasPermission(item.permissions)">
+                    <SidebarMenuButton
+                        as-child
                         :is-active="isLinkActive(item.href)"
                         :tooltip="item.title"
                     >

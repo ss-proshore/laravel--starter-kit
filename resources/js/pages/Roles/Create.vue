@@ -39,6 +39,7 @@
               <Button
                 variant="outline"
                 size="sm"
+                v-if="checkIfHasPermission(['create roles'])"
                 @click="toggleAllPermissions"
                 class="h-8"
               >
@@ -65,7 +66,7 @@
                       {{ isGroupSelected(group) ? 'Deselect All' : 'Select All' }}
                     </Button>
                   </div>
-                  
+
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div
                       v-for="permission in group.permissions"
@@ -123,6 +124,8 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 
+import { checkIfHasPermission } from '@/composables/usePermission';
+
 interface Permission {
   id: number;
   name: string;
@@ -153,7 +156,7 @@ const formatPermissionName = (name: string) => {
 
 // Check if all permissions in a group are selected
 const isGroupSelected = (group: PermissionGroup) => {
-  return group.permissions.every(permission => 
+  return group.permissions.every(permission =>
     form.value.permissions.includes(permission.id)
   );
 };
@@ -178,7 +181,7 @@ const toggleAllPermissions = () => {
 const toggleGroupPermissions = (group: PermissionGroup) => {
   const allSelected = isGroupSelected(group);
   const permissionIds = group.permissions.map(p => p.id);
-  
+
   if (allSelected) {
     // Remove all permissions from this group
     form.value.permissions = form.value.permissions.filter(
@@ -212,4 +215,4 @@ const handlePermissionChange = (permissionId: number, checked: boolean): void =>
 function submit() {
   router.post('/roles', form.value);
 }
-</script> 
+</script>

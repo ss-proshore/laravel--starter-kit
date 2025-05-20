@@ -6,7 +6,7 @@
         <CardHeader>
           <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
             <CardTitle>Users</CardTitle>
-            <Button as="a" href="/users/create">
+              <Button v-if="checkIfHasPermission(['create users'])" as="a" href="/users/create">
               Create User
             </Button>
           </div>
@@ -18,7 +18,7 @@
             <Button type="submit" variant="outline">Search</Button>
             <Button v-if="searchInput" type="button" variant="ghost" @click="clearSearch">Clear</Button>
           </form>
-          
+
           <div class="overflow-x-auto">
             <Table class="w-full">
               <TableHeader>
@@ -39,10 +39,10 @@
                     </span>
                   </TableCell>
                   <TableCell class="text-right">
-                    <Button as="a" :href="`/users/${user.id}/edit`" size="sm" variant="outline" class="mr-2">
+                    <Button v-if="checkIfHasPermission(['edit users'])" as="a" :href="`/users/${user.id}/edit`" size="sm" variant="outline" class="mr-2">
                       Edit
                     </Button>
-                    <Button @click="destroy(user.id)" size="sm" variant="destructive">
+                    <Button v-if="checkIfHasPermission(['delete users'])" @click="destroy(user.id)" size="sm" variant="destructive">
                       Delete
                     </Button>
                   </TableCell>
@@ -53,7 +53,7 @@
               </TableBody>
             </Table>
           </div>
-          
+
           <!-- Pagination Controls -->
           <div v-if="props.users?.links?.length > 3" class="flex justify-center mt-4 gap-2 flex-wrap">
             <Button
@@ -81,6 +81,8 @@ import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '@
 import { Input } from '@/components/ui/input';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
+
+import { checkIfHasPermission } from '@/composables/usePermission';
 
 interface Role {
   id: number;
@@ -127,4 +129,4 @@ function destroy(id: number): void {
     router.delete(`/users/${id}`);
   }
 }
-</script> 
+</script>

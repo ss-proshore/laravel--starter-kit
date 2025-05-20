@@ -13,25 +13,30 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: '/dashboard',
         icon: LayoutGrid,
+        permissions: ['view dashboard'],
     },
     {
-        title: 'RBAC',
+        title: 'User Management',
         icon: Shield,
+        permissions: ['view users', 'view roles', 'view permissions'],
         children: [
             {
                 title: 'Users',
                 href: '/users',
                 icon: Users,
+                permissions: ['view users'],
             },
             {
                 title: 'Roles',
                 href: '/roles',
                 icon: Shield,
+                permissions: ['view roles'],
             },
             {
                 title: 'Permissions',
                 href: '/permissions',
                 icon: KeyRound,
+                permissions: ['view permissions'],
             },
         ],
     },

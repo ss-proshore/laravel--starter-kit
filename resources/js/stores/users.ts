@@ -1,41 +1,43 @@
 import { defineStore } from 'pinia';
-import type { User } from '@/types'; // Assuming your User type is in @/types
+import type { User } from '@/types';
 
-export const useUserStore = defineStore('user', {
-  state: () => ({
-    user: null as User | null,
-  }),
-  actions: {
-    // Action to set the user data
-    setUser(userData: User | null) {
-      this.user = userData;
+export const useUserStore = defineStore('userStore', {
+    state: () => ({
+        user: null as User | null,
+    }),
+
+    actions: {
+        setUser(userData: User | null) {
+            this.user = userData;
+        },
+        clearUser() {
+            this.user = null;
+        },
+        async fetchUser() {
+            try {
+                const response = await fetch('/user');
+                const userData = await response.json();
+                this.setUser(userData);
+            } catch (error) {
+                console.error('Failed to fetch user:', error);
+                this.clearUser();
+            }
+        },
     },
 
-    // Optional: Action to clear user data (e.g., on logout)
-    clearUser() {
-      this.user = null;
+    getters: {
+        getUser: (state) => state.user,
+        isAuthenticated: (state) => !!state.user,
     },
 
-    async fetchUser() {
-      try {
-        const response = await fetch('/user');
-        const userData = await response.json();
-        this.setUser(userData);
-      } catch (error) {
-        console.error('Failed to fetch user:', error);
-        this.clearUser();
-      }
+    // ✅ Enable persistence
+    persist: {
+        enabled: true,
+        strategies: [
+            {
+                key: 'user-store',
+                storage: localStorage, // or sessionStorage
+            },
+        ],
     },
-  },
-  getters: {
-    getUser(state) {
-      return state.user;
-    },
-    isAuthenticated(state) {
-      return !!state.user;
-    },
-  },
-},
-{
-    persist: true,
 });
