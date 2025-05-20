@@ -174,11 +174,7 @@ php artisan permissions:seed
 ```
 
 This command will:
-- Create default permissions:
-  - User management: `view users`, `create users`, `edit users`, `delete users`
-  - Role management: `view roles`, `create roles`, `edit roles`, `delete roles`
-  - Permission management: `view permissions`, `create permissions`, `edit permissions`, `delete permissions`
-  - Dashboard access: `view dashboard`
+- Create default permissions that are listed ther
 - Create a `super_admin` role if it doesn't exist
 - Assign all permissions to the `super_admin` role
 - Handle existing permissions gracefully (won't duplicate if already exists)
@@ -187,30 +183,3 @@ The command uses database transactions to ensure data integrity and will rollbac
 
 ### Available Roles
 - **Super Admin**: Has all permissions (automatically assigned when running `permissions:seed`)
-- **Admin**: Can manage users and content
-- **Editor**: Can create and edit content
-- **User**: Basic access with limited permissions
-
-### Checking Permissions
-In your Vue components, you can check permissions using the provided composable:
-```vue
-<script setup>
-import { usePermission } from '@/composables/usePermission'
-
-const { hasPermission } = usePermission()
-</script>
-
-<template>
-  <button v-if="hasPermission('edit-posts')">
-    Edit Post
-  </button>
-</template>
-```
-
-In Laravel controllers, use the permission middleware:
-```php
-public function __construct()
-{
-    $this->middleware('permission:edit-posts');
-}
-```
