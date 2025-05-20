@@ -4,13 +4,17 @@ import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSep
 import type { User } from '@/types';
 import { Link, router } from '@inertiajs/vue3';
 import { LogOut, Settings } from 'lucide-vue-next';
+import { useUserStore } from '@/stores/users';
 
 interface Props {
     user: User;
 }
+const userStore = useUserStore();
 
 const handleLogout = () => {
     router.flushAll();
+    userStore.setUser(null);
+    localStorage.clear();
 };
 
 defineProps<Props>();
