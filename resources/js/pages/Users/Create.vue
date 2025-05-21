@@ -11,34 +11,45 @@
               <CardDescription>Enter the basic information for the new user.</CardDescription>
             </CardHeader>
             <CardContent>
-              <form @submit.prevent="submit" class="space-y-6">
-                <FormField name="name">
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input v-model="form.name" type="text" required />
-                  </FormControl>
-                  <FormMessage />
+              <form @submit.prevent="onSubmit" class="space-y-6">
+                <FormField v-slot="{ componentField }" name="name">
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input v-bind="componentField" type="text" required />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 </FormField>
-                <FormField name="email">
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input v-model="form.email" type="email" required />
-                  </FormControl>
-                  <FormMessage />
+
+                <FormField v-slot="{ componentField }" name="email">
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input v-bind="componentField" type="email" required />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 </FormField>
-                <FormField name="password">
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input v-model="form.password" type="password" required />
-                  </FormControl>
-                  <FormMessage />
+
+                <FormField v-slot="{ componentField }" name="password">
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input v-bind="componentField" type="password" required />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 </FormField>
-                <FormField name="password_confirmation">
-                  <FormLabel>Confirm Password</FormLabel>
-                  <FormControl>
-                    <Input v-model="form.password_confirmation" type="password" required />
-                  </FormControl>
-                  <FormMessage />
+
+                <FormField v-slot="{ componentField }" name="password_confirmation">
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <Input v-bind="componentField" type="password" required />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 </FormField>
               </form>
             </CardContent>
@@ -53,38 +64,41 @@
               <CardDescription>Select the roles for this user.</CardDescription>
             </CardHeader>
             <CardContent>
-              <FormField name="roles">
-                <FormLabel class="sr-only">Roles</FormLabel>
-                <FormControl>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormItem v-for="role in props.roles || []" :key="role.id" class="flex items-center space-x-3 rounded-lg border p-4 hover:bg-accent/50 transition-colors">
-                      <FormControl>
-                         <Checkbox 
-                          :id="'role-' + role.id"
-                          :model-value="roleBindings[role.id]?.checked || false"
-                          @update:model-value="() => handleChange(role.id)"
-                          class="h-5 w-5"
-                        />
-                      </FormControl>
-                      <FormLabel :for="'role-' + role.id" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        {{ role.name }}
-                      </FormLabel>
-                    </FormItem>
-                  </div>
-                </FormControl>
-                <FormMessage />
+              <FormField v-slot="{ componentField }" name="roles">
+                <FormItem>
+                  <FormLabel class="sr-only">Roles</FormLabel>
+                  <FormControl>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormItem v-for="role in props.roles || []" :key="role.id" class="flex items-center space-x-3 rounded-lg border p-4 hover:bg-accent/50 transition-colors">
+                        <FormControl>
+                          <Checkbox 
+                            :id="'role-' + role.id"
+                            :model-value="roleBindings[role.id]?.checked || false"
+                            @update:model-value="() => handleChange(role.id)"
+                            class="h-5 w-5"
+                          />
+                        </FormControl>
+                        <FormLabel :for="'role-' + role.id" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          {{ role.name }}
+                        </FormLabel>
+                      </FormItem>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
               </FormField>
             </CardContent>
             <CardFooter class="flex justify-end space-x-3 pt-4 border-t">
               <Button
                 variant="outline"
                 @click="router.visit('/users')"
+                type="button"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                @click.prevent="submit"
+                @click.prevent="onSubmit"
               >
                 Create User
               </Button>
@@ -106,6 +120,10 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from '@/components/ui/card';
+import { toTypedSchema } from '@vee-validate/zod';
+import { useForm } from 'vee-validate';
+import { toast } from 'vue-sonner'
+import * as z from 'zod';
 
 interface Role {
   id: number;
@@ -120,50 +138,74 @@ const breadcrumbs = [
   { title: 'Create', href: '/users/create' }
 ];
 
-const form = ref({
-  name: '',
-  email: '',
-  password: '',
-  password_confirmation: '',
-  roles: [] as number[],
+const formSchema = toTypedSchema(z.object({
+  name: z.string()
+    .min(2, { message: 'Name must be at least 2 characters.' })
+    .max(50, { message: 'Name must not be longer than 50 characters.' }),
+  email: z.string()
+    .email({ message: 'Please enter a valid email address.' })
+    .min(1, { message: 'Email is required.' }),
+  password: z.string()
+    .min(8, { message: 'Password must be at least 8 characters.' })
+    .regex(/[A-Z]/, { message: 'Password must contain at least one uppercase letter.' })
+    .regex(/[a-z]/, { message: 'Password must contain at least one lowercase letter.' })
+    .regex(/[0-9]/, { message: 'Password must contain at least one number.' })
+    .regex(/[^A-Za-z0-9]/, { message: 'Password must contain at least one special character.' }),
+  password_confirmation: z.string()
+    .min(1, { message: 'Please confirm your password.' }),
+  roles: z.array(z.number()).optional(),
+}).refine((data) => data.password === data.password_confirmation, {
+  message: "Passwords don't match",
+  path: ["password_confirmation"],
+}));
+
+const { handleSubmit, values, errors, defineField } = useForm({
+  validationSchema: formSchema,
+  initialValues: {
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+    roles: [] as number[],
+  }
 });
+
+const [name, nameField] = defineField('name');
+const [email, emailField] = defineField('email');
+const [password, passwordField] = defineField('password');
+const [passwordConfirmation, passwordConfirmationField] = defineField('password_confirmation');
+const [roles, rolesField] = defineField('roles');
 
 // Create a computed property for each role's checked state
 const roleBindings = computed(() => {
   const bindings: Record<number, { checked: boolean }> = {};
   (props.roles || []).forEach((role: Role) => {
     bindings[role.id] = {
-      checked: form.value.roles.includes(role.id)
+      checked: roles.value.includes(role.id)
     };
   });
   return bindings;
 });
 
 const handleChange = (roleId: number): void => {
-  const isCurrentlyChecked = form.value.roles.includes(roleId);
+  const currentRoles = roles.value || [];
+  const isCurrentlyChecked = currentRoles.includes(roleId);
   
   if (isCurrentlyChecked) {
-    form.value.roles = form.value.roles.filter((id: number) => id !== roleId);
+    roles.value = currentRoles.filter((id: number) => id !== roleId);
   } else {
-    form.value.roles = [...form.value.roles, roleId];
+    roles.value = [...currentRoles, roleId];
   }
 };
 
-function submit(): void {
-  const formData = {
-    ...form.value,
-    roles: Array.isArray(form.value.roles) ? form.value.roles : []
-  };
-  
-  console.log('Submitting form data:', formData);
-  
-  router.post('/users', formData, {
+const onSubmit = handleSubmit((values) => {
+  router.post('/users', values, {
     onSuccess: () => {
-      console.log('User created successfully');
+      toast.success('User created successfully');
     },
-    onError: (errors: any) => {
-      console.error('Error creating user:', errors);
+    onError: (errors) => {
+      toast.error('Failed to create user. Please check the form for errors.');
     }
   });
-}
+});
 </script> 

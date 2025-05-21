@@ -11,7 +11,7 @@
           <CardContent>
             <!-- Search Field -->
             <form @submit.prevent="searchLogs" class="mb-6 flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
-              <Input v-model="searchInput" placeholder="Search logs by description..." class="w-full sm:w-64" />
+              <Input v-model="searchInput" placeholder="Search logs..." class="w-full sm:w-64" />
               <Button type="submit" variant="outline">Search</Button>
               <Button v-if="searchInput" type="button" variant="ghost" @click="clearSearch">Clear</Button>
             </form>
@@ -72,7 +72,7 @@
           <DialogHeader>
             <DialogTitle>Activity Details</DialogTitle>
           </DialogHeader>
-          <div class="mt-4 space-y-4">
+          <div class="mt-4 space-y-4 max-h-[85vh] overflow-y-auto">
             <!-- Causer Information -->
             <div v-if="selectedLog?.causer">
               <h3 class="text-sm font-medium mb-2">User Information</h3>
