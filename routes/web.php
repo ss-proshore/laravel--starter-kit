@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\RoleController;
@@ -57,8 +58,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
     Route::get('/user', [UserController::class, 'userData'])->name('users.data');
 
+
+
     Route::view('/profile', 'profile/edit')
         ->name('profile.edit');
+
+
+
+
+    Route::controller(ActivityLogController::class)->prefix('/activity-logs')->name('activity.')->group( function() {
+
+        Route::get('/',  'index')
+                ->middleware('permission:view activity')
+                ->name('index');
+    });
 });
 
 require __DIR__.'/settings.php';

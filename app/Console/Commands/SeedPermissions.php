@@ -27,7 +27,7 @@ class SeedPermissions extends Command
         'view users', 'create users', 'edit users', 'delete users',
         'view roles', 'create roles', 'edit roles', 'delete roles',
         'view permissions', 'create permissions', 'edit permissions', 'delete permissions',
-        'view dashboard'
+        'view dashboard', 'view activity'
     ];
     /**
      * Execute the console command.

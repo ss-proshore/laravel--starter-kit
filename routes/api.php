@@ -12,5 +12,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('users', UserController::class);
 }); 
 
-
-Route::get('/user', [UserController::class, 'userData'])->name('users.data');
