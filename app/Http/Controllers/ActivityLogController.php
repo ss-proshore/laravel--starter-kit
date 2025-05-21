@@ -19,7 +19,8 @@ class ActivityLogController extends Controller
         if ($search) {
             $activityLogs->where(function ($q) use ($search) {
                 $q->where('log_name', 'like', "%{$search}%")
-                  ->orWhere('event', 'like', "%{$search}%");
+                  ->orWhere('event', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
             });
         }   
         $activityLogs = $activityLogs->paginate(20)->withQueryString();
