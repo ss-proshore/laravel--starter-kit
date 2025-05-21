@@ -25,8 +25,12 @@ const form = useForm({
 
 const submit = () => {
     form.post(route('login'), {
-        onFinish: () => {
-            form.reset('password')
+        onSuccess: async () => {
+            form.reset('password');
+            
+            const res = await fetch('/user');
+            const data = await res.json();
+            userStore.user = data;
         },
     });
 };

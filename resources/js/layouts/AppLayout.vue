@@ -14,13 +14,13 @@ withDefaults(defineProps<Props>(), {
 });
 const userStore = useUserStore();
 
-onMounted(async () => {
-    if (!userStore.user) {
-        const res = await fetch('/user');
-        const data = await res.json();
-        userStore.setUser(data);
-    }
-});
+// onMounted(async () => {
+//     if (!userStore.user) {
+//         const res = await fetch('/user');
+//         const data = await res.json();
+//         userStore.setUser(data);
+//     }
+// });
 
 
 </script>

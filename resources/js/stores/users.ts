@@ -30,7 +30,7 @@ export const useUserStore = defineStore('userStore', {
         isAuthenticated: (state) => !!state.user,
     },
 
-    // ✅ Enable persistence
+    // Enable persistence
     persist: {
         enabled: true,
         strategies: [
