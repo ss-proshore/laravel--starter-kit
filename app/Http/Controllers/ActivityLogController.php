@@ -11,9 +11,19 @@ class ActivityLogController extends Controller
 {
     
     public function index(Request $request)
-    {
-        $activityLogs = ActivityLog::with('causer')->orderByDesc('created_at')->paginate(20);
-        // dd($activityLogs->toArray());
+    {   
+        $search = $request->input('search');
+
+        $activityLogs = ActivityLog::with('causer')->orderByDesc('created_at');
+
+        if ($search) {
+            $activityLogs->where(function ($q) use ($search) {
+                $q->where('log_name', 'like', "%{$search}%")
+                  ->orWhere('event', 'like', "%{$search}%");
+            });
+        }   
+        $activityLogs = $activityLogs->paginate(20)->withQueryString();
+
         return Inertia::render('Activity/Index', [
             'activityLogs' => $activityLogs
         ]);
